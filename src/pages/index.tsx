@@ -95,7 +95,7 @@ export default function Home({ latestEpisodes, allEpisodes }: Props) {
 								<td style={{ width: 100 }}>{episode.publishedAt}</td>
 								<td>{episode.durationAsString}</td>
 								<td>
-									<button type="button">
+									<button type="button" onClick={() => play(episode)}>
 										<img src="/play-green.svg" alt="Tocar episódio" />
 									</button>
 								</td>

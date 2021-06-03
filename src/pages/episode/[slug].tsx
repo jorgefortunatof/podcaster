@@ -3,12 +3,12 @@ import Image from "next/image";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { parseISO, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useRouter } from "next/router";
 
 import { convertDurationToTimeString } from "../../utils/convertDurationToTimeString";
 import api from "../../services/api";
 import styles from "./episode.module.scss";
 import React from "react";
+import { usePlayer } from "../../hooks/player";
 
 interface Episode {
 	id: string;
@@ -27,7 +27,7 @@ interface Props {
 }
 
 export default function Episode({ episode }: Props) {
-	const router = useRouter();
+	const { play } = usePlayer();
 
 	return (
 		<div className={styles.container}>
@@ -45,7 +45,7 @@ export default function Episode({ episode }: Props) {
 					objectFit="cover"
 				/>
 
-				<button type="button">
+				<button type="button" onClick={() => play(episode)}>
 					<img src="/play.svg" alt="Tocar episódio" />
 				</button>
 			</div>
