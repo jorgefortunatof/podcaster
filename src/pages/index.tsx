@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
+
 import api from "../services/api";
 import { GetStaticProps } from "next";
 import { format, parseISO } from "date-fns";
@@ -40,7 +42,9 @@ export default function Home({ latestEpisodes, allEpisodes }: Props) {
 							/>
 
 							<div className={styles.episodeDetails}>
-								<a href="">{episode.title}</a>
+								<Link href={`/episode/${episode.id}`}>
+									<a>{episode.title}</a>
+								</Link>
 								<p>{episode.members}</p>
 
 								<span>{episode.publishedAt}</span>
@@ -80,7 +84,9 @@ export default function Home({ latestEpisodes, allEpisodes }: Props) {
 									/>
 								</td>
 								<td>
-									<a href="">{episode.title}</a>
+									<Link href={`/episode/${episode.id}`}>
+										<a>{episode.title}</a>
+									</Link>{" "}
 								</td>
 								<td>{episode.members}</td>
 								<td style={{ width: 100 }}>{episode.publishedAt}</td>
@@ -122,7 +128,7 @@ export const getStaticProps: GetStaticProps = async () => {
 			publishedAt: format(parseISO(episode.published_at), "d MMM yy", {
 				locale: ptBR,
 			}),
-		} as Episode;
+		};
 	});
 
 	return {
