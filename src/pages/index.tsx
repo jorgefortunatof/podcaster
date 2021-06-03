@@ -7,6 +7,7 @@ import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { convertDurationToTimeString } from "../utils/convertDurationToTimeString";
 import styles from "./home.module.scss";
+import { usePlayer } from "../hooks/player";
 
 interface Episode {
 	id: string;
@@ -25,6 +26,8 @@ interface Props {
 }
 
 export default function Home({ latestEpisodes, allEpisodes }: Props) {
+	const { play } = usePlayer();
+
 	return (
 		<div className={styles.container}>
 			<section className={styles.latestEpisodes}>
@@ -51,7 +54,7 @@ export default function Home({ latestEpisodes, allEpisodes }: Props) {
 								<span>{episode.durationAsString}</span>
 							</div>
 
-							<button type="button">
+							<button type="button" onClick={() => play(episode)}>
 								<img src="/play-green.svg" alt="Tocar episódio" />
 							</button>
 						</li>

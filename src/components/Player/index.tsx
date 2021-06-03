@@ -1,11 +1,14 @@
+import { usePlayer } from "../../hooks/player";
 import styles from "./styles.module.scss";
 
 export function Player() {
+	const { currentEpisode } = usePlayer();
+
 	return (
 		<div className={styles.container}>
 			<header>
 				<img src="/playing.svg" alt="Tocando agora" />
-				<strong>Tocando agora</strong>
+				<strong>Tocando agora {currentEpisode?.title}</strong>
 			</header>
 
 			<div className={styles.emptyPlayer}>
