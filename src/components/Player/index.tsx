@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 import Image from "next/image";
 import { usePlayer } from "../../hooks/player";
 import styles from "./styles.module.scss";
@@ -6,7 +8,17 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 
 export function Player() {
-	const { currentEpisode, isPlaying, togglePlay } = usePlayer();
+	const AudioRef = useRef<HTMLAudioElement>();
+	const { currentEpisode, isPlaying, togglePlay, setPlayingState } =
+		usePlayer();
+
+	useEffect(() => {
+		if (isPlaying) {
+			AudioRef.current?.play();
+		} else {
+			AudioRef.current?.pause();
+		}
+	}, [isPlaying]);
 
 	return (
 		<div className={styles.container}>
@@ -48,7 +60,15 @@ export function Player() {
 					<span>00:00</span>
 				</div>
 
-				{currentEpisode && <audio src={currentEpisode.url} autoPlay />}
+				{currentEpisode && (
+					<audio
+						ref={AudioRef}
+						src={currentEpisode.url}
+						onPlay={() => setPlayingState(true)}
+						onPause={() => setPlayingState(false)}
+						autoPlay
+					/>
+				)}
 
 				<div className={styles.buttons}>
 					<button type="button" disabled={!currentEpisode}>

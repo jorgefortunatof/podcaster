@@ -16,6 +16,7 @@ interface PlayerContextData {
 	isPlaying: boolean;
 	play: (episode: Episode) => void;
 	togglePlay: () => void;
+	setPlayingState: (state: boolean) => void;
 }
 
 const PlayerContext = createContext<PlayerContextData>({} as PlayerContextData);
@@ -38,6 +39,13 @@ const PlayerProvider: React.FC = ({ children }) => {
 		setIsPlaying(!isPlaying);
 	}, [setIsPlaying, isPlaying]);
 
+	const setPlayingState = useCallback(
+		(state: boolean) => {
+			setIsPlaying(state);
+		},
+		[setIsPlaying]
+	);
+
 	return (
 		<PlayerContext.Provider
 			value={{
@@ -47,6 +55,7 @@ const PlayerProvider: React.FC = ({ children }) => {
 				isPlaying,
 				play,
 				togglePlay,
+				setPlayingState,
 			}}
 		>
 			{children}
@@ -55,7 +64,7 @@ const PlayerProvider: React.FC = ({ children }) => {
 };
 
 function usePlayer(): PlayerContextData {
-	const context = useContext(PlayerContext);
+	const context = useContext<PlayerContextData>(PlayerContext);
 
 	if (!context) {
 		throw new Error("usePlayer deve ser passado dentro de um provider");
