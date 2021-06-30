@@ -9,8 +9,21 @@ import "rc-slider/assets/index.css";
 
 export function Player() {
 	const AudioRef = useRef<HTMLAudioElement>();
-	const { currentEpisode, isPlaying, togglePlay, setPlayingState } =
-		usePlayer();
+	const {
+		episodeList,
+		currentEpisode,
+		isPlaying,
+		isLooping,
+		isShuffling,
+		hasNext,
+		hasPrevious,
+		togglePlay,
+		toggleLoop,
+		toggleShuffle,
+		setPlayingState,
+		playNext,
+		playPrevious,
+	} = usePlayer();
 
 	useEffect(() => {
 		if (isPlaying) {
@@ -66,15 +79,25 @@ export function Player() {
 						src={currentEpisode.url}
 						onPlay={() => setPlayingState(true)}
 						onPause={() => setPlayingState(false)}
+						loop={isLooping}
 						autoPlay
 					/>
 				)}
 
 				<div className={styles.buttons}>
-					<button type="button" disabled={!currentEpisode}>
+					<button
+						type="button"
+						disabled={!currentEpisode || episodeList.length === 1}
+						onClick={toggleShuffle}
+						className={isShuffling && styles.isActive}
+					>
 						<img src="/shuffle.svg" alt="Embaralhar" />
 					</button>
-					<button type="button" disabled={!currentEpisode}>
+					<button
+						type="button"
+						disabled={!currentEpisode || !hasPrevious}
+						onClick={playPrevious}
+					>
 						<img src="/play-previous.svg" alt="Tocar anterior" />
 					</button>
 					<button
@@ -89,10 +112,19 @@ export function Player() {
 							<img src="/play.svg" alt="Tocar" />
 						)}
 					</button>
-					<button type="button" disabled={!currentEpisode}>
+					<button
+						type="button"
+						disabled={!currentEpisode || !hasNext}
+						onClick={playNext}
+					>
 						<img src="/play-next.svg" alt="Tocar proxímo" />
 					</button>
-					<button type="button" disabled={!currentEpisode}>
+					<button
+						type="button"
+						disabled={!currentEpisode}
+						onClick={toggleLoop}
+						className={isLooping && styles.isActive}
+					>
 						<img src="/repeat.svg" alt="Repetir" />
 					</button>
 				</div>

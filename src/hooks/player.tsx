@@ -1,4 +1,10 @@
-import { createContext, useCallback, useState, useContext } from "react";
+import {
+	createContext,
+	useCallback,
+	useState,
+	useContext,
+	useEffect,
+} from "react";
 
 interface Episode {
 	title: string;
@@ -14,8 +20,19 @@ interface PlayerContextData {
 	currentEpisodeIndex: number;
 
 	isPlaying: boolean;
-	play: (episode: Episode) => void;
+	isLooping: boolean;
+	isShuffling: boolean;
 	togglePlay: () => void;
+	toggleLoop: () => void;
+	toggleShuffle: () => void;
+
+	hasNext: boolean;
+	hasPrevious: boolean;
+
+	play: (episode: Episode) => void;
+	playList: (list: Episode[], index: number) => void;
+	playNext: () => void;
+	playPrevious: () => void;
 	setPlayingState: (state: boolean) => void;
 }
 
@@ -23,8 +40,19 @@ const PlayerContext = createContext<PlayerContextData>({} as PlayerContextData);
 
 const PlayerProvider: React.FC = ({ children }) => {
 	const [isPlaying, setIsPlaying] = useState(false);
+	const [isLooping, setIsLooping] = useState(false);
+	const [isShuffling, setIsShuffling] = useState(false);
+
 	const [episodeList, setEpisodeList] = useState<Episode[]>([]);
+
 	const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState<number>(0);
+	const [hasNext, setHasNext] = useState(false);
+	const [hasPrevious, setHasPrevious] = useState(false);
+
+	useEffect(() => {
+		setHasNext(currentEpisodeIndex + 1 < episodeList.length);
+		setHasPrevious(currentEpisodeIndex - 1 >= 0);
+	}, [currentEpisodeIndex, episodeList]);
 
 	const play = useCallback(
 		(episode: Episode) => {
@@ -35,9 +63,40 @@ const PlayerProvider: React.FC = ({ children }) => {
 		[setCurrentEpisodeIndex, setEpisodeList, setIsPlaying]
 	);
 
+	const playList = useCallback((list: Episode[], index: number) => {
+		setEpisodeList(list);
+		setCurrentEpisodeIndex(index);
+		setIsPlaying(true);
+	}, []);
+
+	const playNext = useCallback(() => {
+		if (isShuffling) {
+			const max = episodeList.length - 1;
+			const randomIndex = Math.floor(Math.random() * max);
+
+			setCurrentEpisodeIndex(randomIndex);
+		} else if (hasNext) {
+			setCurrentEpisodeIndex(currentEpisodeIndex + 1);
+		}
+	}, [currentEpisodeIndex, hasNext]);
+
+	const playPrevious = useCallback(() => {
+		if (!hasPrevious) return;
+
+		setCurrentEpisodeIndex(currentEpisodeIndex - 1);
+	}, [currentEpisodeIndex, hasPrevious]);
+
 	const togglePlay = useCallback(() => {
 		setIsPlaying(!isPlaying);
-	}, [setIsPlaying, isPlaying]);
+	}, [isPlaying]);
+
+	const toggleLoop = useCallback(() => {
+		setIsLooping(!isLooping);
+	}, [isLooping]);
+
+	const toggleShuffle = useCallback(() => {
+		setIsShuffling(!isShuffling);
+	}, [isShuffling]);
 
 	const setPlayingState = useCallback(
 		(state: boolean) => {
@@ -53,8 +112,17 @@ const PlayerProvider: React.FC = ({ children }) => {
 				currentEpisodeIndex,
 				currentEpisode: episodeList[currentEpisodeIndex],
 				isPlaying,
+				isLooping,
+				isShuffling,
+				hasNext,
+				hasPrevious,
 				play,
+				playList,
 				togglePlay,
+				toggleLoop,
+				toggleShuffle,
+				playNext,
+				playPrevious,
 				setPlayingState,
 			}}
 		>
