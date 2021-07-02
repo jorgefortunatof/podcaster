@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
+import Head from "next/head";
+
 import { GetStaticPaths, GetStaticProps } from "next";
 import { parseISO, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -26,11 +28,15 @@ interface Props {
 	episode: Episode;
 }
 
-export default function Episode({ episode }: Props) {
+const Episode: React.FC<Props> = ({ episode }) => {
 	const { play } = usePlayer();
 
 	return (
 		<div className={styles.container}>
+			<Head>
+				<title>{episode.title}</title>
+			</Head>
+
 			<div className={styles.thumbnailContainer}>
 				<Link href="/">
 					<button type="button">
@@ -49,21 +55,21 @@ export default function Episode({ episode }: Props) {
 					<img src="/play.svg" alt="Tocar episódio" />
 				</button>
 			</div>
-
 			<header>
 				<h1>{episode.title}</h1>
 				<span>{episode.members}</span>
 				<span>{episode.publishedAt}</span>
 				<span>{episode.durationAsString}</span>
 			</header>
-
 			<div
 				className={styles.description}
 				dangerouslySetInnerHTML={{ __html: episode.description }}
 			/>
 		</div>
 	);
-}
+};
+
+export default Episode;
 
 export const getStaticPaths: GetStaticPaths = async () => {
 	const { data } = await api.get("episodes", {

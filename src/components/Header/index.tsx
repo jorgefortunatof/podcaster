@@ -4,7 +4,7 @@ import ptBR from "date-fns/locale/pt-BR";
 
 import styles from "./styles.module.scss";
 
-export function Header() {
+export const Header: React.FC = () => {
 	const currentDate = format(new Date(), "EEEEEE, d MMMM", {
 		locale: ptBR,
 	});
@@ -22,4 +22,4 @@ export function Header() {
 			<span>{currentDate}</span>
 		</header>
 	);
-}
+};

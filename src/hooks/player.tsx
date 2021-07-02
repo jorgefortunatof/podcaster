@@ -34,6 +34,7 @@ interface PlayerContextData {
 	playNext: () => void;
 	playPrevious: () => void;
 	setPlayingState: (state: boolean) => void;
+	clearPlayerState: () => void;
 }
 
 const PlayerContext = createContext<PlayerContextData>({} as PlayerContextData);
@@ -50,9 +51,9 @@ const PlayerProvider: React.FC = ({ children }) => {
 	const [hasPrevious, setHasPrevious] = useState(false);
 
 	useEffect(() => {
-		setHasNext(currentEpisodeIndex + 1 < episodeList.length);
+		setHasNext(isShuffling || currentEpisodeIndex + 1 < episodeList.length);
 		setHasPrevious(currentEpisodeIndex - 1 >= 0);
-	}, [currentEpisodeIndex, episodeList]);
+	}, [currentEpisodeIndex, episodeList, isShuffling]);
 
 	const play = useCallback(
 		(episode: Episode) => {
@@ -105,6 +106,11 @@ const PlayerProvider: React.FC = ({ children }) => {
 		[setIsPlaying]
 	);
 
+	const clearPlayerState = useCallback(() => {
+		setEpisodeList([]);
+		setCurrentEpisodeIndex(0);
+	}, []);
+
 	return (
 		<PlayerContext.Provider
 			value={{
@@ -124,6 +130,7 @@ const PlayerProvider: React.FC = ({ children }) => {
 				playNext,
 				playPrevious,
 				setPlayingState,
+				clearPlayerState,
 			}}
 		>
 			{children}

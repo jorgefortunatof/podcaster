@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Head from "next/head";
 
 import api from "../services/api";
 import { GetStaticProps } from "next";
@@ -25,12 +26,15 @@ interface Props {
 	allEpisodes: Episode[];
 }
 
-export default function Home({ latestEpisodes, allEpisodes }: Props) {
+const Home: React.FC<Props> = ({ latestEpisodes, allEpisodes }) => {
 	const { playList } = usePlayer();
 	const episodeList = [...latestEpisodes, ...allEpisodes];
 
 	return (
 		<div className={styles.container}>
+			<Head>
+				<title>Podcaster</title>
+			</Head>
 			<section className={styles.latestEpisodes}>
 				<h2>Últimos lançamentos</h2>
 
@@ -115,7 +119,9 @@ export default function Home({ latestEpisodes, allEpisodes }: Props) {
 			</section>
 		</div>
 	);
-}
+};
+
+export default Home;
 
 export const getStaticProps: GetStaticProps = async () => {
 	const { data } = await api.get("episodes", {
